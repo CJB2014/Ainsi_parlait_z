@@ -23,39 +23,73 @@ url_book <- c('http://www.gutenberg.org/cache/epub/345/pg345.txt',
               'http://www.gutenberg.org/cache/epub/33/pg33.txt')
 
 titles_book <- c('Dracula','Heart_Of_Darkness','Ulysses','Beyond_Good_And_Evil','Scarlett_Letter')
-books <- lapply(url_book, read_lines)
-names(books) <- titles_book
 
-allbooks <- lapply(books, as.data.frame,stringsAsFactors = F)
-names(allbooks) <- titles_book
-
-dima <- t(as.data.frame(lapply(allbooks, dim)))
-allbooks <- do.call(rbind, allbooks)
-allbooks$books <- rep(titles_book, times =dima[,1])
 
 
 
 #---------------------------------------------------------------------------------
-# Word stat
+# Word stat -- Dracula 
 #---------------------------------------------------------------------------------
+dracula <- read_lines(url_book[1])
+dracula <- dracula[-c(1:189)]
+dracula <- as.data.frame(dracula, stringAsFactors = F)
+dracula$dracula <- as.character(dracula$dracula)
 
-text_df <- text_df %>%
-  mutate(linenumber = row_number(), 
-         partie = cumsum(str_detect(ainsi, 'PARTIE')))%>%
-  ungroup()
+stat_word <- function(df){
+  names(df) <- 'text'
 
+  df1 <- df %>%
+    mutate(linenumber = row_number(), 
+           partie = cumsum(str_detect(text, 'CHAPTER')))%>%
+    ungroup()
+  
+  
+  tidy_df <- df%>%
+    unnest_tokens(word,text)
+  
+  data("stop_words")
+  
+  count_df <- tidy_df %>%
+    anti_join(stop_words)%>%
+    count(word, sort = T)
+  
+  plot_df <- ggplot(data = head(count_df, n = 20), aes(word,n))+geom_bar(stat = 'identity')+coord_flip()
+  return(list(df1,tidy_df,count_df,plot_df))
+}
 
-tidy_df <- text_df%>%
-  unnest_tokens(word,ainsi)
+drac <- stat_word(dracula)
 
-stop_words_fr <- data.frame(word = stopwords('french'), stringsAsFactors = F)
+#---------------------------------------------------------------------------------
+# Word stat -- other book
+#---------------------------------------------------------------------------------
+##heart of darkness
+HOD <- read_lines(url_book[3])
+HOD <- HOD[-c(1:30)]
+HOD <- as.data.frame(HOD)
+HOD$HOD <- as.character(HOD$HOD)
 
-tidy_df <- tidy_df %>%
-  anti_join(stop_words_fr)%>%
-  count(word, sort = T)
+HOD_stat <-stat_word(HOD)
 
-ggplot(data = head(tidy_df, n = 20), aes(word,n))+geom_bar(stat = 'identity')+coord_flip()
+##Ulysses
+UL <- read_lines(url_book[2])
+UL <- UL[-c(1:35)]
+UL <- as.data.frame(UL, stringsAsFactors = F)
 
+UL_stat <- stat_word(UL)
+
+##scarlet letter 
+SL <- read_lines(url_book[5])
+SL <- SL[-c(1:169)]
+SL <- as.data.frame(SL, stringsAsFactors = F)
+
+SL_stat <- stat_word(SL)
+
+##beyond good an evil
+BGE <- read_lines(url_book[4])
+BGE <- BGE[-c(1:77)]
+BGE <- as.data.frame(BGE, stringsAsFactors = F)
+
+BGE_stat <- stat_word(BGE)
 
 #---------------------------------------------------------------------------------
 # Sentiment analysis  
