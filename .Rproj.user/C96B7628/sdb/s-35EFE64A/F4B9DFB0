@@ -1,17 +1,18 @@
 {
     "collab_server" : "",
-    "contents" : "\nlibrary(readr)\nlibrary(plyr)\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(tidytext)\nlibrary(SnowballC)\nlibrary(tm)\nlibrary(stringr)\n\n#---------------------------------------------------------------------------------\n# Bring data in \n#---------------------------------------------------------------------------------\nainsi <- read_lines('http://www.gutenberg.org/cache/epub/5258/pg5258.txt')\n\n\nainsi <- ainsi[-c(1:36)]\ntext_df <- data.frame(ainsi, stringsAsFactors = F)\n\n\n#---------------------------------------------------------------------------------\n# Word stat\n#---------------------------------------------------------------------------------\n\ntext_df <- text_df %>%\n  mutate(linenumber = row_number(), \n         partie = cumsum(str_detect(ainsi, 'PARTIE')))%>%\n  ungroup()\n\n\ntidy_df <- text_df%>%\n  unnest_tokens(word,ainsi)\n\nstop_words_fr <- data.frame(word = stopwords('french'), stringsAsFactors = F)\n\ntidy_df <- tidy_df %>%\n  anti_join(stop_words_fr)%>%\n  count(word, sort = T)\n\n\n#---------------------------------------------------------------------------------\n# Sentiment analysis  \n#---------------------------------------------------------------------------------\n\n\n#---------------------------------------------------------------------------------\n# Topic Modelling \n#---------------------------------------------------------------------------------\n\n",
+    "contents" : "\nlibrary(readr)\nlibrary(plyr)\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(tidytext)\nlibrary(SnowballC)\nlibrary(tm)\nlibrary(stringr)\nlibrary(ggplot2)\n\n\n#---------------------------------------------------------------------------------\n# Bring data in \n#---------------------------------------------------------------------------------\nainsi <- read_lines('http://www.gutenberg.org/cache/epub/5258/pg5258.txt')\n\n\nainsi <- ainsi[-c(1:36)]\ntext_df <- data.frame(ainsi, stringsAsFactors = F)\n\n\n#---------------------------------------------------------------------------------\n# Word stat\n#---------------------------------------------------------------------------------\n\ntext_df <- text_df %>%\n  mutate(linenumber = row_number(), \n         partie = cumsum(str_detect(ainsi, 'PARTIE')))%>%\n  ungroup()\n\n\ntidy_df <- text_df%>%\n  unnest_tokens(word,ainsi)\n\nstop_words_fr <- data.frame(word = stopwords('french'), stringsAsFactors = F)\n\ntidy_df <- tidy_df %>%\n  anti_join(stop_words_fr)%>%\n  count(word, sort = T)\n\nggplot(data = head(tidy_df, n = 20), aes(word,n))+geom_bar(stat = 'identity')+coord_flip()\n\n\n#---------------------------------------------------------------------------------\n# Sentiment analysis  \n#---------------------------------------------------------------------------------\n\n\n\n\n#---------------------------------------------------------------------------------\n# Topic Modelling \n#---------------------------------------------------------------------------------\n\n",
     "created" : 1491831675356.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3894604932",
+    "hash" : "3175083379",
     "id" : "F4B9DFB0",
-    "lastKnownWriteTime" : 1491833445,
-    "last_content_update" : 1491833445246,
+    "lastKnownWriteTime" : 1491834041,
+    "last_content_update" : 1491834041201,
     "path" : "~/code_repo/project_1/ainsi_parlait_Z.R",
     "project_path" : null,
     "properties" : {
+        "source_window_id" : ""
     },
     "relative_order" : 1,
     "source_on_save" : false,

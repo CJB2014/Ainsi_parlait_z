@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\nlibrary(readr)\nlibrary(plyr)\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(tidytext)\nlibrary(SnowballC)\nlibrary(tm)\nlibrary(stringr)\nlibrary(ggplot2)\nlibrary(gutenbergr)\n\n\n#---------------------------------------------------------------------------------\n# Bring data in \n#---------------------------------------------------------------------------------\n# books id : Dracula, heart of darkness, ulysses, beyond good and evil, scarlett letter\n\nurl_book <- c('http://www.gutenberg.org/cache/epub/345/pg345.txt',\n              'https://www.gutenberg.org/files/4300/4300-0.txt',\n              'https://www.gutenberg.org/files/219/219-0.txt',\n              'http://www.gutenberg.org/cache/epub/4363/pg4363.txt',\n              'http://www.gutenberg.org/cache/epub/33/pg33.txt')\n\ntitles_book <- c('Dracula','Heart_Of_Darkness','Ulysses','Beyond_Good_And_Evil','Scarlett_Letter')\nbooks <- lapply(url_book, read_lines)\nnames(books) <- titles_book\n\nallbooks <- lapply(books, as.data.frame,stringsAsFactors = F)\nnames(allbooks) <- titles_book\n\ndima <- t(as.data.frame(lapply(allbooks, dim)))\nallbooks <- do.call(rbind, allbooks)\nallbooks$books <- rep(titles_book, times =dima[,1])\n\n\n\n#---------------------------------------------------------------------------------\n# Word stat\n#---------------------------------------------------------------------------------\n\ntext_df <- text_df %>%\n  mutate(linenumber = row_number(), \n         partie = cumsum(str_detect(ainsi, 'PARTIE')))%>%\n  ungroup()\n\n\ntidy_df <- text_df%>%\n  unnest_tokens(word,ainsi)\n\nstop_words_fr <- data.frame(word = stopwords('french'), stringsAsFactors = F)\n\ntidy_df <- tidy_df %>%\n  anti_join(stop_words_fr)%>%\n  count(word, sort = T)\n\nggplot(data = head(tidy_df, n = 20), aes(word,n))+geom_bar(stat = 'identity')+coord_flip()\n\n\n#---------------------------------------------------------------------------------\n# Sentiment analysis  \n#---------------------------------------------------------------------------------\n\n\n\n\n#---------------------------------------------------------------------------------\n# Topic Modelling \n#---------------------------------------------------------------------------------\n\n",
+    "created" : 1491834047679.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3400323895",
+    "id" : "41C45EFA",
+    "lastKnownWriteTime" : 1491836805,
+    "last_content_update" : 1491836805206,
+    "path" : "//wdmpsvr01/RedirectedFolders/clemence.burnichon/My Documents/code_repo/Ainsi_parlait_z/books_all.R",
+    "project_path" : "books_all.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
