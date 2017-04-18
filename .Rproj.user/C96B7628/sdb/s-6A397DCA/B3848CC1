@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\nlibrary(plyr)\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(tidytext)\nlibrary(SnowballC)\nlibrary(tm)\nlibrary(stringr)\nlibrary(ggplot2)\nlibrary(gutenbergr)\n\nafinn <- get_sentiments('afinn')\nbing <- get_sentiments('bing')\nnrc <- get_sentiments('nrc')\n\n#---------------------------------------------------------------------------------\n# Sentiment analysis  \n#---------------------------------------------------------------------------------\ndracula <- read_lines(url_book[1])\ndracula <- dracula[-c(1:189)]\ndracula <- as.data.frame(dracula, stringAsFactors = F)\ndracula$dracula <- as.character(dracula$dracula)\n\n#bing\ntidy_dracula <- dracula%>%\n  mutate(linenumber = row_number(), \n         chapter = cumsum(str_detect(dracula,'CHAPTER')))%>%\n  unnest_tokens(word, dracula)\n\ndraculasent <- tidy_dracula %>%\n  inner_join(bing)%>%\n  count(chapter, index = linenumber %/% 80, sentiment)%>%\n  spread(sentiment, n , fill = 0 )%>%\n  mutate(sentiment = positive - negative)\n  \nggplot(draculasent, aes(index, sentiment, fill = as.factor(chapter)))+\n  geom_col(show.legend = F)+\n  facet_wrap(~chapter, ncol = 5, scales = 'free_x')\n\nlibrary(wordcloud)\n\ntidy_dracula%>%\n  anti_join(stop_words)%>%\n  count(word)%>%\n  with(wordcloud(word,n,max.words = 100))\n\n\n\n#---------------------------------------------------------------------------------\n# Topic Modelling \n#---------------------------------------------------------------------------------\nlibrary(topicmodels)\nlibrary(tm)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "created" : 1492525133848.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "755259564",
+    "id" : "B3848CC1",
+    "lastKnownWriteTime" : 1492530755,
+    "last_content_update" : 1492530755926,
+    "path" : "//wdmpsvr01/RedirectedFolders/clemence.burnichon/My Documents/code_repo/Ainsi_parlait_z/heart_of_darkness.R",
+    "project_path" : "heart_of_darkness.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

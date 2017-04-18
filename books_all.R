@@ -35,26 +35,28 @@ dracula <- dracula[-c(1:189)]
 dracula <- as.data.frame(dracula, stringAsFactors = F)
 dracula$dracula <- as.character(dracula$dracula)
 
-stat_word <- function(df){
+stat_word <- function(df) {
   names(df) <- 'text'
-
+  
   df1 <- df %>%
-    mutate(linenumber = row_number(), 
-           partie = cumsum(str_detect(text, 'CHAPTER')))%>%
+    mutate(linenumber = row_number(),
+           partie = cumsum(str_detect(text, 'CHAPTER'))) %>%
     ungroup()
   
   
-  tidy_df <- df%>%
-    unnest_tokens(word,text)
+  tidy_df <- df %>%
+    unnest_tokens(word, text)
   
   data("stop_words")
   
   count_df <- tidy_df %>%
-    anti_join(stop_words)%>%
+    anti_join(stop_words) %>%
     count(word, sort = T)
   
-  plot_df <- ggplot(data = head(count_df, n = 20), aes(word,n))+geom_bar(stat = 'identity')+coord_flip()
-  return(list(df1,tidy_df,count_df,plot_df))
+  plot_df <-
+    ggplot(data = head(count_df, n = 20), aes(word, n)) + geom_bar(stat = 'identity') +
+    coord_flip()
+  return(list(df1, tidy_df, count_df, plot_df))
 }
 
 drac <- stat_word(dracula)
@@ -90,15 +92,5 @@ BGE <- BGE[-c(1:77)]
 BGE <- as.data.frame(BGE, stringsAsFactors = F)
 
 BGE_stat <- stat_word(BGE)
-
-#---------------------------------------------------------------------------------
-# Sentiment analysis  
-#---------------------------------------------------------------------------------
-
-
-
-
-#---------------------------------------------------------------------------------
-# Topic Modelling 
-#---------------------------------------------------------------------------------
+BGE_stat[[4]]
 
